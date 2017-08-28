@@ -8,6 +8,7 @@ var RecipeSchema = new Schema({
   update_date : {type:Date},
   delete_date : {type: Date, default: null},
 	recipe_category_id : {type: mongoose.Schema.Types.ObjectId, ref: 'RecipeCategory'},
+	remark : {type:String}
 });
 
 

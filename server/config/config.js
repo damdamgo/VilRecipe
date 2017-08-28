@@ -6,5 +6,7 @@ Config.KEY_ACCESS_V1 = "3689D3A12EF6CFF358395A6AAEDB5";
 ERROR
 */
 Config.ERROR_URL = 100;
+Config.ERROR_INTERNAL = 99;
+Config.NO_ERROR = 0;
 
 module.exports = Config;

@@ -1,0 +1,3 @@
+rootProject.name = 'VilRecipes'
+
+include ':app'

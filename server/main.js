@@ -26,9 +26,19 @@ function startServer(){
     else next();
   })
   ///Recipe
-  var recipe = app_require('./recipe/recipe');
+  var recipe = app_require('recipe/recipe');
   app.use('/api/v1/:ACCESS_CODE/recipe', recipe);
+  //category_recipe
+  var recipeCategories = app_require("recipe/category_recipe/category_recipe");
+  app.use('/api/v1/:ACCESS_CODE/category', recipeCategories);
+  //country
+  var recipeCategories = app_require("country/country");
+  app.use('/api/v1/:ACCESS_CODE/country', recipeCategories);
+  //defaut
+  app.get('/', function (req, res) {
+    res.render({"default":"default"});
+  });
   //launch the server
-  app.listen(3000, function () {
+  app.listen(3000, '0.0.0.0', function () {
   });
 }
