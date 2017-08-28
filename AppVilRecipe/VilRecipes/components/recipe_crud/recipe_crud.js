@@ -1,6 +1,6 @@
 import React , { Component }from 'react';
 import {TouchableHighlight,Button,StyleSheet, TextInput, ActivityIndicator, ListView, Text, View } from 'react-native';
-import Config from 'VilRecipe/config/config';
+import Config from 'VilRecipes/config/config';
 import {ListCategory,ListCountry,Remark} from './recipe_crud_components';
 import {PagerTabIndicator, IndicatorViewPager, PagerTitleIndicator, PagerDotIndicator} from 'rn-viewpager';
 import Icon from 'react-native-vector-icons/Ionicons';

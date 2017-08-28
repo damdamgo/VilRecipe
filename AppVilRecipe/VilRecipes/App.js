@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const VilRecipe = StackNavigator({
+const VilRecipes = StackNavigator({
   Home: { screen: App },
   Recipe : {screen:RecipeCRUD}
 },
@@ -43,4 +43,4 @@ const VilRecipe = StackNavigator({
  }
 });
 
-export default VilRecipe;
+export default VilRecipes;

@@ -1,6 +1,6 @@
 import React , { Component }from 'react';
 import {  ActivityIndicator, ListView, Text, View } from 'react-native';
-import Config from 'VilRecipe/config/config';
+import Config from 'VilRecipes/config/config';
 
 export default class ListRecipe extends React.Component {
 

@@ -1,6 +1,6 @@
 import React , { Component }from 'react';
 import { TouchableHighlight,Button,StyleSheet, TextInput,  ActivityIndicator, ListView, Text, View } from 'react-native';
-import Config from 'VilRecipe/config/config';
+import Config from 'VilRecipes/config/config';
 
 class ListCategory extends React.Component {
   constructor(props) {
