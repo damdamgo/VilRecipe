@@ -39,7 +39,7 @@ const VilRecipes = StackNavigator({
 },
 {
  cardStyle: {
-  paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight
+  //add color
  }
 });
 

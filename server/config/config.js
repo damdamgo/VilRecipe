@@ -7,6 +7,8 @@ ERROR
 */
 Config.ERROR_URL = 100;
 Config.ERROR_INTERNAL = 99;
+Config.DATA_EXPECTED = 98;
+Config.ERROR_DB = 97;
 Config.NO_ERROR = 0;
 
 module.exports = Config;

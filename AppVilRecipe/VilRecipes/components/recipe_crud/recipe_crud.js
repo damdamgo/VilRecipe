@@ -1,10 +1,10 @@
 import React , { Component }from 'react';
-import {TouchableHighlight,Button,StyleSheet, TextInput, ActivityIndicator, ListView, Text, View } from 'react-native';
+import {ScrollView,TouchableHighlight,Button,StyleSheet, TextInput, ActivityIndicator, ListView, Text, View } from 'react-native';
 import Config from 'VilRecipes/config/config';
-import {ListCategory,ListCountry,Remark} from './recipe_crud_components';
+import {ListCategory,ListCountry,Remark,FileManager} from './recipe_crud_components';
 import {PagerTabIndicator, IndicatorViewPager, PagerTitleIndicator, PagerDotIndicator} from 'rn-viewpager';
 import Icon from 'react-native-vector-icons/Ionicons';
-var RNFS = require('react-native-fs');
+
 
 export default class RecipeCRUD extends React.Component {
 
@@ -20,7 +20,7 @@ export default class RecipeCRUD extends React.Component {
 
   initStateRecipe(status){
     const objectRecipe = {};
-    this.state = {recipe  : {},current_accept_page:0,current_page:0};
+    this.state = {recipe  : {},current_accept_page:0,current_page:0,country_selected:{},category_selected:{}};
   }
 
   changePage(event){
@@ -30,42 +30,70 @@ export default class RecipeCRUD extends React.Component {
     this.setState({current_page: event.position});
   }
 
-  updateRemarks(remarks){
-    console.log("remarks",remarks);
-    this.state.remarks = remarks;
+
+  setCountry(country){
+    this.setState({country_selected: country});
   }
 
-  selectFile(){
-    // get a list of files and directories in the main bundle
-    RNFS.readDir(RNFS.MainBundlePath) // On Android, use "RNFS.DocumentDirectoryPath" (MainBundlePath is not defined)
-      .then((result) => {
-        console.log('GOT RESULT', result);
+  setCategory(category){
+    this.setState({category_selected: category});
+  }
 
-        // stat the first file
-        return Promise.all([RNFS.stat(result[0].path), result[0].path]);
-      })
-      .then((statResult) => {
-        if (statResult[0].isFile()) {
-          // if we have a file, read it
-          return RNFS.readFile(statResult[1], 'utf8');
-        }
-
-        return 'no file';
-      })
-      .then((contents) => {
-        // log the file contents
-        console.log(contents);
-      })
-      .catch((err) => {
-        console.log(err.message, err.code);
+  sendFile(index,array,idRecipe){
+    if(index!=array.length){
+      const data = new FormData();
+      data.append(array[index].name,{
+          uri:array[index].uri,
+          type:array[index].type,
+          name:array[index].name
       });
+      data.append("idRecipe",idRecipe);
+      fetch(Config.URl_ADD_FILE_RECIPE+"/"+idRecipe, {
+        method: 'POST',
+        body: data
+      }).then((response) => response.json())
+      .then((responseJson) => {
+        if(responseJson.error==Config.NO_ERROR){
+          this.fileManager.setUploadFile(index);
+          this.sendFile(index++,array)
+        }
+      }).catch(function(error) {
+        console.log('Il y a eu un problème avec l\'opération fetch: ' + error.message);
+      });
+    }
+  }
+
+  sendRecipe(){
+    const recipe = this.state.recipe;
+    recipe.remarks = this.remark.getRemarks();
+    recipe.country = this.state.country_selected;
+    recipe.category = this.state.category_selected;
+    const files = this.fileManager.getFiles();
+    const bodySend = JSON.stringify({recipe:recipe});
+    fetch(Config.URl_ADD_RECIPE, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: bodySend
+    }).then((res) => {
+      const resJson = JSON.parse(res._bodyText)
+      if(resJson.error==Config.NO_ERROR){
+        this.state.recipe.creation_date=Date.now()
+        this.sendFile(0,files,resJson.data._id);
+      }
+    }).catch((error) => {
+        console.error(error);
+    });
   }
 
   render() {
     // The screen's current route is passed in to `props.navigation.state`:
     return (
       <View style={{flex:1,backgroundColor:"#757575"}}>
-          <IndicatorViewPager onPageSelected={(event)=>this.changePage(event)} ref={(indicatorViewPager) => { this.indicatorViewPager = indicatorViewPager; }}  style={{flex:1}} horizontalScroll={false} indicator={this._renderDotIndicator()}>
+          <IndicatorViewPager onPageSelected={(event)=>this.changePage(event)} ref={(indicatorViewPager) => { this.indicatorViewPager = indicatorViewPager; }}  style={{flex:1,
+          padding:40}} horizontalScroll={false} indicator={this._renderDotIndicator()}>
              <View style={styles.recipeStep}>
                <Text style={styles.titleStep}>1. Nom de la recette : </Text>
                <TextInput style={styles.textInputStep} underlineColorAndroid={"transparent"}
@@ -79,7 +107,9 @@ export default class RecipeCRUD extends React.Component {
              </View>
              <View style={styles.recipeStep}>
                <Text style={styles.titleStep}>2. Remarque : </Text>
+               <ScrollView>
                <Remark remarks={this.state.remarks} ref={(remark) => { this.remark = remark; }}></Remark>
+               </ScrollView>
                <Button
                 onPress={()=>this.indicatorViewPager.setPage(this.state.current_page+1)}
                 title="Suivant"
@@ -88,29 +118,48 @@ export default class RecipeCRUD extends React.Component {
              </View>
              <View style={styles.recipeStep}>
                <Text style={styles.titleStep}>3. Categorie : </Text>
-               <ListCategory style={styles.limitsListe}></ListCategory>
-               <Button
-                onPress={()=>this.indicatorViewPager.setPage(this.state.current_page+1)}
-                title="Suivant"
-                color="#9E9E9E"
-                />
+               <ScrollView>
+                <ListCategory callback={this.setCategory.bind(this)} style={styles.limitsListe} ref={(category) => { this.category = category; }}></ListCategory>
+               </ScrollView>
+               <View style={styles.nextLayout}>
+                 <Text style={styles.nextLayoutText}>
+                   {this.state.category_selected && this.state.category_selected.name?"Catégorie sélectionnée :"+this.state.category_selected.name:"Pas de catégorie selectionnée"}
+                 </Text>
+                 {this.state.category_selected && this.state.category_selected.name && <Button
+                  onPress={()=>this.indicatorViewPager.setPage(this.state.current_page+1)}
+                  title="Suivant"
+                  color="#9E9E9E"
+                  />}
+               </View>
              </View>
              <View style={styles.recipeStep}>
                <Text style={styles.titleStep}>4. Pays : </Text>
-               <ListCountry style={styles.limitsListe}></ListCountry>
-               <Button
-                onPress={()=>this.indicatorViewPager.setPage(this.state.current_page+1)}
-                title="Suivant"
-                color="#9E9E9E"
-                />
+               <ScrollView>
+                 <ListCountry callback={this.setCountry.bind(this)} style={styles.limitsListe} ref={(country) => { this.country = country; }}></ListCountry>
+                </ScrollView>
+                <View style={styles.nextLayout}>
+                  <Text style={styles.nextLayoutText}>
+                    {this.state.country_selected && this.state.country_selected.name?"Pays sélectionné :"+this.state.country_selected.name:"Pas de pays sélectionné"}
+                  </Text>
+                  {this.state.country_selected && this.state.country_selected.name && <Button
+                   onPress={()=>this.indicatorViewPager.setPage(this.state.current_page+1)}
+                   title="Suivant"
+                   color="#9E9E9E"
+                   />}
+                </View>
              </View>
              <View style={styles.recipeStep}>
                <Text style={styles.titleStep}>5. Fichier : </Text>
-               <Button
-                onPress={()=>this.selectFile()}
-                title="file"
-                color="#9E9E9E"
-                />
+               <ScrollView>
+                <FileManager  ref={(fileManager) => { this.fileManager = fileManager; }}></FileManager>
+              </ScrollView>
+               <View style={styles.nextLayout}>
+                <Button
+                  onPress={()=>this.sendRecipe()}
+                  title="Envoyer"
+                  color="#9E9E9E"
+                  />
+               </View>
              </View>
           </IndicatorViewPager>
           { this.state.current_page !=0 &&
@@ -148,8 +197,7 @@ export default class RecipeCRUD extends React.Component {
 
 const styles = StyleSheet.create({
   recipeStep: {
-    flex:1,
-    padding:"5%"
+    flex:1
   },
   bottomNavigationLeft:{
     position:"absolute",
@@ -176,5 +224,15 @@ const styles = StyleSheet.create({
   },
   limitsListe:{
     height:"80%"
+  },
+  nextLayout:{
+    flexDirection: 'row',
+    padding:20
+  },
+  nextLayoutText:{
+    color:'white',
+    fontSize:15,
+    alignSelf:"center",
+    marginRight:20
   }
 });
