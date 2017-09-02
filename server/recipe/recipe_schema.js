@@ -8,7 +8,11 @@ var RecipeSchema = new Schema({
   update_date : {type:Date},
   delete_date : {type: Date, default: null},
 	recipe_category_id : {type: mongoose.Schema.Types.ObjectId, ref: 'RecipeCategory'},
-	remarks : {type:[String]}
+	remarks : {type:[String]},
+	time : {preparation:{hour:{type:Number},minute:{type:Number}},cooking:{hour:{type:Number},minute:{type:Number}}},
+	cost:{type:Number},
+	people:{type:Number},
+	recipe_difficulty_id : {type: mongoose.Schema.Types.ObjectId, ref: 'RecipeDifficulty'},
 });
 
 

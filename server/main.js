@@ -38,6 +38,12 @@ function startServer(){
   //country
   var recipeCountry = app_require("country/country");
   app.use('/api/v1/:ACCESS_CODE/country', recipeCountry);
+  //file recipe
+  var recipeFile = app_require("recipe/file_recipe/file_recipe");
+  app.use('/api/v1/:ACCESS_CODE/file', recipeFile);
+  //recipe difficulty_recipe
+  var recipeDifficulty = app_require("recipe/difficulty_recipe/difficulty_recipe");
+  app.use('/api/v1/:ACCESS_CODE/difficulty', recipeDifficulty);
   //defaut
   app.get('/', function (req, res) {
     res.render({"default":"default"});

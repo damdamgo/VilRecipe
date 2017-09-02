@@ -4,16 +4,26 @@ global.app_require = function(name) {
 var Config = app_require('config/config');
 var mongoManager = app_require('mongo_manager/mongo_manager');
 var RecipeCategory = app_require('recipe/category_recipe/category_recipe_schema');
+var RecipeDifficulty = app_require('recipe/difficulty_recipe/difficulty_recipe_schema');
 var Country = app_require('country/country_schema');
 
 mongoManager.connectToServer(function(){
   dropTable();
 });
 
+
+
+/*
+
+WARNING RUN THIS CODE ONLY ONCE BECAUSE THE ID ARE USED IN RECIPE
+
+*/
 function dropTable(){
   RecipeCategory.remove({},function(err,res){
     Country.remove({},function(err,res){
-      insertTable();
+      RecipeDifficulty.remove({},function(err,res){
+        insertTable();
+      });
     });
   });
   //insertTable();
@@ -57,6 +67,26 @@ function insertTable(){
   }];
   arrayCategory.forEach(function(data){
     RecipeCategory.create(data);
+  });
+
+  const arrayDifficulty = [{
+    name:"Très Facile",
+    level:1
+  },{
+    name:"Facile",
+    level:2
+  },{
+    name:"Moyen",
+    level:3
+  },{
+    name:"Difficile",
+    level:4
+  },{
+    name:"Confirmé",
+    level:5
+  }]
+  arrayDifficulty.forEach(function(data){
+    RecipeDifficulty.create(data);
   });
 
   const arrayCountry = [

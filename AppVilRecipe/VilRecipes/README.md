@@ -22,3 +22,4 @@ react navigation : https://reactnavigation.org/docs/navigators/stack
 react native : https://facebook.github.io/react-native/docs/components-and-apis.html
 file picker : https://github.com/Elyx0/react-native-document-picker
 upload fichier : https://github.com/g6ling/React-Native-Tips/tree/master/How_to_upload_photo%2Cfile_in%20react-native
+download file : https://github.com/wkh237/react-native-fetch-blob
