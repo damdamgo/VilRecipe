@@ -4,6 +4,7 @@ global.app_require = function(name) {
 global.path_work = function(name){
   return __dirname + '/' + name;
 }
+var subdomain = require('express-subdomain');
 var Config = app_require('config/config');
 var mongoManager = app_require('mongo_manager/mongo_manager');
 var express = require('express');
@@ -49,6 +50,7 @@ function startServer(){
     res.render({"default":"default"});
   });
 
+  app.use(subdomain('vilrecipe', router));
   //launch the server
   app.listen(3000, '0.0.0.0', function () {
   });
