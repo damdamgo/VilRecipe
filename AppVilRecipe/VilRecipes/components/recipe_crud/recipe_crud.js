@@ -64,7 +64,6 @@ export default class RecipeCRUD extends React.Component {
             type:array[index].type,
             name:array[index].name
         });
-        data.append("idRecipe",idRecipe);
         fetch(Config.URl_ADD_FILE_RECIPE+"/"+idRecipe, {
           method: 'POST',
           body: data

@@ -18,6 +18,9 @@ RecipeFileSchema.statics.saveRecipeFile = function(file,filename,recipeName,reci
 	mkdirp(path_work('public/recipe/'+recipeId), function(err) {
 		const ext = filename.split("\.");
 		const nameRecipe = recipeName+"."+ ext[ext.length-1] ;
+		if(fs.existsSync(path_work('public/recipe/'+recipeId+'/' + nameRecipe))) {
+		   fs.unlink(path_work('public/recipe/'+recipeId+'/' + nameRecipe));
+		}
 		const fstream = fs.createWriteStream(path_work('public/recipe/'+recipeId+'/' + nameRecipe));
 		file.pipe(fstream);
 		fstream.on('close', function () {
