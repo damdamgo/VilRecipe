@@ -57,6 +57,7 @@ export default class RecipeCRUD extends React.Component {
         this.sendFile(index+1,array,idRecipe)
       }else
       {
+        const self = this;
         const data = new FormData();
         this.setTextUpload("Enregistrement du fichier"+array[index].name);
         data.append(array[index].name,{
@@ -78,7 +79,7 @@ export default class RecipeCRUD extends React.Component {
             ToastAndroid.show("Une erreur c'est produite. Veuillez réessayer ultérieurement", ToastAndroid.SHORT);
           }
         }).catch(function(error) {
-          this.stopUpload();
+          self.stopUpload();
           ToastAndroid.show("Une erreur c'est produite. Veuillez réessayer ultérieurement", ToastAndroid.SHORT);
         });
       }
@@ -120,6 +121,7 @@ export default class RecipeCRUD extends React.Component {
     recipe.time = this.state.time;
     const files = this.fileManager.getFiles();
     const bodySend = JSON.stringify({recipe:recipe});
+    const self = this;
     if(recipe._id){
       fetch(Config.URl_UPDATE_RECIPE, {
         method: 'POST',
@@ -137,7 +139,7 @@ export default class RecipeCRUD extends React.Component {
           ToastAndroid.show("Une erreur c'est produite. Veuillez réessayer ultérieurement", ToastAndroid.SHORT);
         }
       }).catch((error) => {
-          this.stopUpload()
+          self.stopUpload()
           ToastAndroid.show("Une erreur c'est produite. Veuillez réessayer ultérieurement", ToastAndroid.SHORT);
       });
     }
@@ -160,7 +162,7 @@ export default class RecipeCRUD extends React.Component {
           ToastAndroid.show("Une erreur c'est produite. Veuillez réessayer ultérieurement", ToastAndroid.SHORT);
         }
       }).catch((error) => {
-          this.stopUpload()
+          self.stopUpload()
           ToastAndroid.show("Une erreur c'est produite. Veuillez réessayer ultérieurement", ToastAndroid.SHORT);
       });
     }

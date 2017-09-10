@@ -2,7 +2,7 @@ Config = {};
 
 Config.KEY_ACCESS_V1 = "3689D3A12EF6CFF358395A6AAEDB5";
 
-Config.URL_START = "http://192.168.1.40:3000";//"https://vilrecipe.damdamgo.fr";
+Config.URL_START = "https://vilrecipe.damdamgo.fr";//"http://192.168.1.40:3000";
 
 Config.URl_API_V1 = Config.URL_START+ "/api/v1/"+Config.KEY_ACCESS_V1;
 
