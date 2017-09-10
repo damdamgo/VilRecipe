@@ -1,7 +1,9 @@
 import React , { Component }from 'react';
-import {  TouchableHighlight,ActivityIndicator, StyleSheet,ListView, Text, View } from 'react-native';
+import { TouchableHighlight,ActivityIndicator, StyleSheet,ListView, Text, View } from 'react-native';
 import Config from 'VilRecipes/config/config';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {Card,CardImage,CardTitle,CardContent,CardAction} from 'react-native-card-view';
+import Button from 'react-native-button';
 
 export default class ListRecipe extends React.Component {
 
@@ -35,18 +37,27 @@ export default class ListRecipe extends React.Component {
 
   renderRecipe(recipe){
     return (
-      <View style={styles.viewRecipe} >
-        <Text>{recipe.name} --- {recipe.recipe_category_id.name} --- {recipe.recipe_country_id.name}</Text>
-        <TouchableHighlight style={styles.viewRecipeIcon} onPress={() => this.gotToViewRecipe(recipe)}  underlayColor={"#E1E1E1"}>
-          <View>
-            <Icon name="md-book" size={24}/>
-          </View>
-        </TouchableHighlight>
-        <TouchableHighlight style={styles.viewRecipeIcon}  onPress={() => this.gotToCRUDRecipe(recipe)} underlayColor={"#E1E1E1"}>
-          <View>
-            <Icon name="md-create" size={24} />
-          </View>
-        </TouchableHighlight>
+      <View style={styles.container,styles.card}>
+        <CardTitle>
+          <Text style={styles.title}>{recipe.name}</Text>
+        </CardTitle>
+        <CardContent>
+          <Text>Categorie : {recipe.recipe_category_id.name}</Text>
+          <Text>Pays : {recipe.recipe_country_id.info.name}</Text>
+        </CardContent>
+        <CardAction >
+          <Button
+            style={styles.button}
+            onPress={() => this.gotToCRUDRecipe(recipe)}>
+            Modifier
+          </Button>
+          <Button
+            style={styles.button}
+            onPress={() => this.gotToViewRecipe(recipe)}>
+            Voir
+          </Button>
+        </CardAction>
+        <View style={styles.separator} />
       </View>
 
     )
@@ -63,7 +74,7 @@ export default class ListRecipe extends React.Component {
 
        return (
          <View style={{flex: 1, paddingTop: 20}}>
-           <ListView
+           <ListView enableEmptySections={true}
              dataSource={this.state.dataSource}
              renderRow={this.renderRecipe.bind(this)}
            />
@@ -73,12 +84,33 @@ export default class ListRecipe extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  viewRecipe: {
-    flex:1,
-    padding:5,
-    flexDirection: 'row',
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+    margin: 5
   },
-  viewRecipeIcon:{
-    paddingLeft:10
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 2,
+    shadowColor: "#000000",
+    shadowOpacity: 0.3,
+    shadowRadius: 1,
+    shadowOffset: {
+      height: 1,
+      width: 0.3,
+    }
+  },
+  title: {
+    fontSize: 22,
+    backgroundColor: 'transparent'
+  },
+  separator: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#E9E9E9'
+  },
+  button: {
+    marginRight: 10
   }
 });

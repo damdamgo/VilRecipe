@@ -1,8 +1,9 @@
 import React , { Component }from 'react';
-import {ToastAndroid, TouchableHighlight,Button,StyleSheet, TextInput,  ActivityIndicator, ListView, Text, View } from 'react-native';
+import {ScrollView,ToastAndroid, TouchableHighlight,Button,StyleSheet, TextInput,  ActivityIndicator, ListView, Text, View } from 'react-native';
 import Config from 'VilRecipes/config/config';
 import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
+
 
 class ListCategory extends React.Component {
   constructor(props) {
@@ -11,17 +12,28 @@ class ListCategory extends React.Component {
       isLoading : true
     }
     this.callback = props.callback
-    this.getCateogryList();
+    this.getMainCategory();
   }
-  getCateogryList(){
-    fetch(Config.URl_GET_CATEGORY).then((response)=>response.json()).then((responseJson)=>{
+
+  getMainCategory(){
+      fetch(Config.URL_GET_MAIN_CATEGORY).then((response)=>response.json()).then((responseJson)=>{
+        console.log(responseJson)
+        this.setState({
+          isLoading: false,
+          mainCategory: responseJson.data
+        });
+      });
+  }
+
+  getCategoryList(idMainCategorie){
+    fetch(Config.URl_GET_CATEGORY+"/"+idMainCategorie).then((response)=>response.json()).then((responseJson)=>{
       let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1._id !== r2._id});
       this.setState({
-        isLoading: false,
         dataSource: ds.cloneWithRows(responseJson.data),
       });
     });
   }
+
   renderCategory(category){
     return(
       <Text onPress={()=>this.callback(category)} style={styles.displayListData}>{category.name}</Text>
@@ -35,13 +47,24 @@ class ListCategory extends React.Component {
            </View>
          );
        }
-
+       const mainInformation = [];
+       for (var i=0; i < this.state.mainCategory.length; i++) {
+         const id = this.state.mainCategory[i]._id;
+           mainInformation.push(<Button key={i} onPress={()=>this.getCategoryList(id)} title={this.state.mainCategory[i].name} color="#9E9E9E"/>);
+       }
        return (
          <View>
-           <ListView
+         <ScrollView horizontal={true}>
+          <View style={styles.mainInformation}>
+            {mainInformation}
+          </View>
+         </ScrollView>
+         {this.state.dataSource &&
+           <ListView enableEmptySections={true}
              dataSource={this.state.dataSource}
              renderRow={this.renderCategory.bind(this)}
            />
+          }
          </View>
        );
   }
@@ -98,13 +121,11 @@ class ListCountry extends React.Component {
       country_selected : {}
     };
     this.callback = props.callback;
-    this.getCountryList();
   }
-  getCountryList(){
-    fetch(Config.URl_GET_COUNTRY).then((response)=>response.json()).then((responseJson)=>{
+  getCountryList(code){
+    fetch(Config.URl_GET_COUNTRY+"/"+code).then((response)=>response.json()).then((responseJson)=>{
       let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1._id !== r2._id});
       this.setState({
-        isLoading: false,
         dataSource: ds.cloneWithRows(responseJson.data),
         country_selected : {}
       });
@@ -112,23 +133,28 @@ class ListCountry extends React.Component {
   }
   renderCountry(country){
     return(
-      <Text onPress={()=>this.callback(country)} style={styles.displayListData}>{country.name}</Text>
+      <Text onPress={()=>this.callback(country)} style={styles.displayListData}>{country.info.name}</Text>
     );
   }
   render() {
-    if (this.state.isLoading) {
-         return (
-           <View>
-             <ActivityIndicator />
-           </View>
-         );
+       const mainInformation = [];
+       for (var i=0; i <Config.continents.length; i++) {
+         const code = Config.continents[i].code;
+           mainInformation.push(<Button key={i} onPress={()=>this.getCountryList(code)} title={Config.continents[i].name} color="#9E9E9E"/>);
        }
        return (
-         <View >
-           <ListView
+          <View >
+         <ScrollView horizontal={true}>
+          <View style={styles.mainInformation}>
+            {mainInformation}
+          </View>
+         </ScrollView>
+         {this.state.dataSource &&
+           <ListView enableEmptySections={true}
              dataSource={this.state.dataSource}
              renderRow={this.renderCountry.bind(this)}
            />
+           }
          </View>
        );
   }
@@ -304,6 +330,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems:"center",
     flex:1
+  },
+  mainInformation:{
+    flexDirection: 'row',
   }
 });
 

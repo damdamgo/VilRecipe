@@ -44,6 +44,9 @@ function startServer(){
   //recipe difficulty_recipe
   var recipeDifficulty = app_require("recipe/difficulty_recipe/difficulty_recipe");
   app.use('/api/v1/:ACCESS_CODE/difficulty', recipeDifficulty);
+  //main category
+  var recipeMainCategories = app_require("recipe/category_recipe/main_category/main_category");
+  app.use('/api/v1/:ACCESS_CODE/mainCategory', recipeMainCategories);
   //defaut
   app.get('/', function (req, res) {
     res.render({"default":"default"});

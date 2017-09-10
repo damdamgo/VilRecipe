@@ -128,8 +128,7 @@ export default class RecipeCRUD extends React.Component {
           'Content-Type': 'application/json',
         },
         body: bodySend
-      }).then((res) => {
-        const resJson = JSON.parse(res._bodyText)
+      }).then((response)=>response.json()).then((resJson)=>{
         if(resJson.error==Config.NO_ERROR){
           this.sendFile(0,files,recipe._id);
         }
@@ -150,8 +149,7 @@ export default class RecipeCRUD extends React.Component {
           'Content-Type': 'application/json',
         },
         body: bodySend
-      }).then((res) => {
-        const resJson = JSON.parse(res._bodyText)
+      }).then((response)=>response.json()).then((resJson)=>{
         if(resJson.error==Config.NO_ERROR){
           this.state.recipe.creation_date=Date.now();
           this.state.recipe._id=resJson.data._id;
@@ -188,7 +186,7 @@ export default class RecipeCRUD extends React.Component {
 
   checkNumber(value){
     if(value==0){
-      return true
+      return true;
     }
     return Number(value)==value && value!="";
   }
@@ -196,15 +194,14 @@ export default class RecipeCRUD extends React.Component {
   checkedNextStepRecipe(){
     const recipe = this.state.recipe;
     const time = this.state.time;
-    return this.checkNumber(time.preparation.hour) && this.checkNumber(time.preparation.minute) && this.checkNumber(time.cooking.minute) && this.checkNumber(time.cooking.hour) && recipe.name && this.checkNumber(recipe.cost) && this.checkNumber(recipe.people);
+    return this.checkNumber(time.preparation.hour) && this.checkNumber(time.preparation.minute) && this.checkNumber(time.cooking.minute) && this.checkNumber(time.cooking.hour) && recipe.name && this.checkNumber(recipe.people);
   }
 
   render() {
     // The screen's current route is passed in to `props.navigation.state`:
     return (
       <View style={{flex:1,backgroundColor:"#757575"}}>
-          <IndicatorViewPager onPageSelected={(event)=>this.changePage(event)} ref={(indicatorViewPager) => { this.indicatorViewPager = indicatorViewPager; }}  style={{flex:1,
-          padding:40}} horizontalScroll={false} indicator={this._renderDotIndicator()}>
+          <IndicatorViewPager onPageSelected={(event)=>this.changePage(event)} ref={(indicatorViewPager) => { this.indicatorViewPager = indicatorViewPager; }}  style={{flex:1,paddingBottom:40,paddingLeft:5,paddingTop:5,paddingRight:5}} horizontalScroll={false} indicator={this._renderDotIndicator()}>
              <View style={styles.recipeStep}>
                <ScrollView>
                 <Text style={styles.titleStep}>1. Recette : </Text>
@@ -212,10 +209,6 @@ export default class RecipeCRUD extends React.Component {
                  <TextInput style={styles.textInputStep} underlineColorAndroid={"transparent"}
                  onChangeText={(text) => this.updateValue("name",text)}
                  value={this.state.recipe.name}/>
-                 <Text style={styles.titleStep}>Cout : </Text>
-                 <TextInput style={styles.textInputStep} underlineColorAndroid={"transparent"}
-                 onChangeText={(text) => this.updateValue("cost",text)}  keyboardType = 'numeric'
-                 value={this.checkNumber(this.state.recipe.cost)?""+this.state.recipe.cost:this.state.recipe.cost}/>
                  <Text style={styles.titleStep}>Nombre de personne : </Text>
                  <TextInput style={styles.textInputStep} underlineColorAndroid={"transparent"}
                  onChangeText={(text) => this.updateValue("people",text)}  keyboardType = 'numeric'
@@ -265,10 +258,10 @@ export default class RecipeCRUD extends React.Component {
                <Text style={styles.titleStep}>3. Categorie : </Text>
                <ScrollView>
                 <ListCategory callback={this.setCategory.bind(this)} style={styles.limitsListe} ref={(category) => { this.category = category; }}></ListCategory>
-               </ScrollView>
+                </ScrollView>
                <View style={styles.nextLayout}>
                  <Text style={styles.nextLayoutText}>
-                   {this.state.category_selected && this.state.category_selected.name?"Catégorie sélectionnée :"+this.state.category_selected.name:"Pas de catégorie selectionnée"}
+                   {this.state.category_selected && this.state.category_selected.name?"Catégorie sélectionnée : "+this.state.category_selected.name:"Pas de catégorie selectionnée"}
                  </Text>
                  {this.state.category_selected && this.state.category_selected.name && <Button
                   onPress={()=>this.indicatorViewPager.setPage(this.state.current_page+1)}
@@ -284,9 +277,9 @@ export default class RecipeCRUD extends React.Component {
                 </ScrollView>
                 <View style={styles.nextLayout}>
                   <Text style={styles.nextLayoutText}>
-                    {this.state.country_selected && this.state.country_selected.name?"Pays sélectionné :"+this.state.country_selected.name:"Pas de pays sélectionné"}
+                    {this.state.country_selected && this.state.country_selected.info?"Pays sélectionné : "+this.state.country_selected.info.name:"Pas de pays sélectionné"}
                   </Text>
-                  {this.state.country_selected && this.state.country_selected.name && <Button
+                  {this.state.country_selected && this.state.country_selected.info && <Button
                    onPress={()=>this.indicatorViewPager.setPage(this.state.current_page+1)}
                    title="Suivant"
                    color="#9E9E9E"
@@ -392,7 +385,6 @@ const styles = StyleSheet.create({
     height:"80%"
   },
   nextLayout:{
-    flexDirection: 'row',
     padding:20
   },
   nextLayoutText:{

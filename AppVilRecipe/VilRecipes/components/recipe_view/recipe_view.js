@@ -46,18 +46,24 @@ export default class ViewRecipe extends React.Component {
     })
   }
 
+
   render(){
     const recipe = this.state.recipe
+      const remarks = [];
+      for(let i=0;i<recipe.remarks.length;i++){
+        remarks.push(<Text key={i} style={styles.remarkText}>{recipe.remarks[i]}</Text>)
+      }
        return (
          <View style={{flex:1,backgroundColor:"#757575"}}>
            <Text style={styles.viewRecipeText}>Nom : {recipe.name}</Text>
-           <Text style={styles.viewRecipeText}>Cout : {recipe.cost} €</Text>
            <Text style={styles.viewRecipeText}>Nombre de personne : {recipe.people}</Text>
            <Text style={styles.viewRecipeText}>Temps de préparation : {recipe.time.preparation.hour}h:{recipe.time.preparation.minute}m</Text>
            <Text style={styles.viewRecipeText}>Temps de cuisson : {recipe.time.cooking.hour}h:{recipe.time.cooking.minute}m</Text>
            <Text style={styles.viewRecipeText}>Catégorie : {recipe.recipe_category_id.name}</Text>
-           <Text style={styles.viewRecipeText}>Pays : {recipe.recipe_country_id.name}</Text>
+           <Text style={styles.viewRecipeText}>Pays : {recipe.recipe_country_id.info.name}</Text>
            <Text style={styles.viewRecipeText}>Difficulté : {recipe.recipe_difficulty_id.name}</Text>
+           <Text style={styles.viewRecipeText}>Remarques : </Text>
+           {remarks}
            <View>
            <TouchableHighlight style={styles.viewRecipeIcon} onPress={() => this.downloadFiles(this.state.recipe._id)}  underlayColor={"#E1E1E1"}>
              <View>
@@ -78,6 +84,12 @@ const styles = StyleSheet.create({
   viewRecipeText:{
     color:'white',
     fontSize:15,
+    margin:15
+  },
+  remarkText:{
+    color:'white',
+    fontSize:15,
+    marginLeft:30,
     margin:15
   }
 });

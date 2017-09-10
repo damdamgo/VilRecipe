@@ -16,6 +16,7 @@ Config.URl_GET_EXISTING_FILE = Config.URl_API_V1+"/file/get";
 Config.URl_REMOVE_FILE = Config.URl_API_V1+"/file/remove";
 Config.URl_UPDATE_RECIPE = Config.URl_API_V1+"/recipe/update";
 Config.URL_DOWNLOAD_RECIPE = Config.URl_API_V1+"/file/download";
+Config.URL_GET_MAIN_CATEGORY = Config.URl_API_V1+"/mainCategory/get";
 /**
 ERROR
 */
@@ -24,6 +25,17 @@ Config.ERROR_INTERNAL = 99;
 Config.DATA_EXPECTED = 98;
 Config.ERROR_DB = 97;
 Config.NO_ERROR = 0;
+
+Config.continents = [
+  {name : "All",code : "all" },
+  { name :"Africa",code :"AF"},
+  {name :"Antarctica",code :"AN" },
+  {code :"AS",name :  "Asia"},
+  {code :"EU",name : "Europe"},
+  {code :"NA",name : "North America"},
+  {code :"OC",name : "Oceania"},
+  {code :"SA",name : "South America"}
+];
 
 
 module.exports = Config;
